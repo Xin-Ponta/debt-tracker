@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>たらこの借金返済管理システム</title>
     <style>
         * {
@@ -15,71 +15,70 @@
             font-family: 'Meiryo', 'メイリオ', Tahoma, 'Comic Sans MS', cursive, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 0;
+            font-size: 16px;
+            line-height: 1.5;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 100%;
+            margin: 0;
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
+            min-height: 100vh;
         }
 
         .header {
             background: linear-gradient(135deg, #2196F3, #21CBF3);
             color: white;
-            padding: 30px;
+            padding: 20px 15px;
             text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
             font-weight: 300;
         }
 
         .header p {
             opacity: 0.9;
-            font-size: 1.1rem;
+            font-size: 0.9rem;
         }
 
         .summary-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 30px;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 15px;
             background: #f8f9fa;
         }
 
         .card {
             background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
             text-align: center;
-            border-left: 5px solid #2196F3;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-left: 4px solid #2196F3;
         }
 
         .card h3 {
-            color: #555;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
+            color: #666;
+            font-size: 0.7rem;
+            margin-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         .card .amount {
-            font-size: 2rem;
+            font-size: 1.2rem;
             font-weight: bold;
             color: #2196F3;
+            word-break: break-all;
         }
 
         .card.debt { border-left-color: #f44336; }
@@ -92,23 +91,30 @@
         .card.remaining .amount { color: #FF9800; }
 
         .progress-section {
-            padding: 30px;
+            padding: 20px 15px;
             background: white;
+        }
+
+        .progress-section h2 {
+            text-align: center;
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
         }
 
         .progress-bar {
             background: #e0e0e0;
-            height: 20px;
-            border-radius: 10px;
+            height: 15px;
+            border-radius: 8px;
             overflow: hidden;
-            margin: 20px 0;
+            margin: 15px 0;
         }
 
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, #4CAF50, #8BC34A);
             transition: width 0.5s ease;
-            border-radius: 10px;
+            border-radius: 8px;
         }
 
         .progress-text {
@@ -116,128 +122,174 @@
             margin-top: 10px;
             font-weight: bold;
             color: #555;
+            font-size: 1.1rem;
         }
 
         .input-section {
-            padding: 30px;
+            padding: 20px 15px;
             background: #f8f9fa;
             border-top: 1px solid #e0e0e0;
         }
 
-        .input-form {
-            display: flex;
-            gap: 15px;
-            align-items: end;
-            flex-wrap: wrap;
+        .input-section h2 {
+            margin-bottom: 15px;
+            color: #555;
+            font-size: 1.1rem;
         }
 
         .form-group {
-            flex: 1;
-            min-width: 150px;
+            margin-bottom: 15px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: bold;
             color: #555;
+            font-size: 0.9rem;
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px;
+            padding: 15px;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 1rem;
             transition: border-color 0.3s ease;
+            background: white;
         }
 
         .form-group input:focus {
             outline: none;
             border-color: #2196F3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
         }
 
         .add-btn {
             background: linear-gradient(135deg, #4CAF50, #45a049);
             color: white;
             border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
+            padding: 18px 25px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
             transition: transform 0.2s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
         }
 
-        .add-btn:hover {
-            transform: translateY(-2px);
+        .add-btn:active {
+            transform: scale(0.98);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 0 15px;
+        }
+
+        .section-header h2 {
+            color: #555;
+            font-size: 1.1rem;
+        }
+
+        .clear-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .clear-btn:active {
+            transform: scale(0.95);
         }
 
         .table-section {
-            padding: 30px;
+            padding: 0 0 20px 0;
             background: white;
         }
 
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-
-        th {
-            background: linear-gradient(135deg, #2196F3, #1976D2);
-            color: white;
+        .history-item {
             padding: 15px;
-            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+            background: white;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .history-date {
+            font-size: 0.9rem;
+            color: #666;
             font-weight: bold;
-        }
-
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        tr:hover {
-            background: #f5f5f5;
         }
 
         .delete-btn {
-            background: #f44336;
+            background: #ff4444;
             color: white;
             border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
+            padding: 6px 12px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 0.8rem;
-        }
-
-        .delete-btn:hover {
-            background: #d32f2f;
-        }
-
-        .amount-cell {
+            font-size: 0.7rem;
             font-weight: bold;
-            color: #2196F3;
         }
 
-        .total-cell {
-            font-weight: bold;
-            color: #4CAF50;
+        .delete-btn:active {
+            transform: scale(0.95);
         }
 
-        .remaining-cell {
-            font-weight: bold;
-            color: #FF9800;
+        .history-amounts {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            text-align: center;
         }
+
+        .amount-item {
+            padding: 8px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .amount-item .label {
+            font-size: 0.7rem;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .amount-item .value {
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .payment-amount { background: #e3f2fd; }
+        .payment-amount .value { color: #2196F3; }
+
+        .total-amount { background: #e8f5e8; }
+        .total-amount .value { color: #4CAF50; }
+
+        .remaining-amount { background: #fff3e0; }
+        .remaining-amount .value { color: #FF9800; }
 
         .simulation-section {
-            padding: 30px;
+            padding: 20px 15px;
             background: #f8f9fa;
             border-top: 1px solid #e0e0e0;
         }
@@ -246,87 +298,203 @@
             background: linear-gradient(135deg, #9C27B0, #673AB7);
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
+            padding: 15px 25px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            width: 100%;
             transition: transform 0.2s ease;
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
         }
 
-        .simulation-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .simulation-form {
-            display: flex;
-            gap: 15px;
-            align-items: end;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
+        .simulation-btn:active {
+            transform: scale(0.98);
         }
 
         .simulation-results {
             background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            margin-top: 20px;
-        }
-
-        .simulation-table {
-            overflow-x: auto;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
             margin-top: 15px;
         }
 
-        .simulation-table table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
-
-        .simulation-table th {
-            background: linear-gradient(135deg, #9C27B0, #673AB7);
-            color: white;
-            padding: 12px 8px;
-            text-align: center;
-            font-size: 0.8rem;
-        }
-
-        .simulation-table td {
-            padding: 10px 8px;
-            border-bottom: 1px solid #e0e0e0;
+        .simulation-results h3 {
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 1rem;
             text-align: center;
         }
 
-        .planned-amount { color: #2196F3; font-weight: bold; }
-        .actual-amount { color: #4CAF50; font-weight: bold; }
-        .difference-positive { color: #4CAF50; font-weight: bold; }
-        .difference-negative { color: #f44336; font-weight: bold; }
-        .completed-row { background-color: #e8f5e8; }
-        .future-row { background-color: #f5f5f5; }
+        .sim-item {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+        }
 
-        .summary-row {
+        .sim-item:last-child {
+            border-bottom: none;
             background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
             font-weight: bold;
         }
+
+        .sim-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .sim-month {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .sim-status {
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background: #e0e0e0;
+        }
+
+        .sim-amounts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .sim-amount {
+            text-align: center;
+            padding: 6px;
+            border-radius: 6px;
+            background: white;
+        }
+
+        .sim-amount .label {
+            font-size: 0.7rem;
+            color: #666;
+            margin-bottom: 2px;
+        }
+
+        .sim-amount .value {
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .planned .value { color: #2196F3; }
+        .actual .value { color: #4CAF50; }
+
+        .sim-balances {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+        }
+
+        .sim-balance {
+            text-align: center;
+            padding: 4px;
+            border-radius: 4px;
+            background: white;
+        }
+
+        .sim-balance .label {
+            font-size: 0.6rem;
+            color: #666;
+            margin-bottom: 2px;
+        }
+
+        .sim-balance .value {
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .difference-positive { color: #4CAF50; }
+        .difference-negative { color: #f44336; }
 
         .hidden {
             display: none;
         }
 
-        @media (max-width: 768px) {
+        .empty-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+
+        .fab:active {
+            transform: scale(0.9);
+        }
+
+        /* 高さ調整 */
+        @media (max-height: 600px) {
+            .header {
+                padding: 15px;
+            }
+            
             .header h1 {
-                font-size: 2rem;
+                font-size: 1.3rem;
             }
             
-            .input-form {
-                flex-direction: column;
+            .summary-cards {
+                padding: 10px;
+            }
+        }
+
+        /* ダークモード対応 */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             }
             
-            .form-group {
-                min-width: 100%;
+            .container {
+                background: #2d2d2d;
+                color: #fff;
+            }
+            
+            .card {
+                background: #3d3d3d;
+                color: #fff;
+            }
+            
+            .progress-section {
+                background: #2d2d2d;
+            }
+            
+            .input-section {
+                background: #3d3d3d;
+            }
+            
+            .form-group input {
+                background: #4d4d4d;
+                color: #fff;
+                border-color: #555;
             }
         }
     </style>
@@ -334,8 +502,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🐟 たらこの借金返済管理システム 🐟</h1>
-            <p>返済進捗を管理して、完済までの道のりを見える化しましょう</p>
+            <h1>🐟 たらこの借金返済管理 🐟</h1>
+            <p>スマートに返済を管理しよう</p>
         </div>
 
         <div class="summary-cards">
@@ -344,7 +512,7 @@
                 <div class="amount">¥<span id="totalDebt">373,004</span></div>
             </div>
             <div class="card paid">
-                <h3>返済済み額</h3>
+                <h3>返済済み</h3>
                 <div class="amount">¥<span id="totalPaid">0</span></div>
             </div>
             <div class="card remaining">
@@ -358,7 +526,7 @@
         </div>
 
         <div class="progress-section">
-            <h2 style="text-align: center; color: #555; margin-bottom: 20px;">返済進捗</h2>
+            <h2>返済進捗</h2>
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill" style="width: 0%"></div>
             </div>
@@ -368,84 +536,53 @@
         </div>
 
         <div class="input-section">
-            <h2 style="margin-bottom: 20px; color: #555;">返済記録を追加</h2>
-            <div class="input-form">
-                <div class="form-group">
-                    <label for="paymentDate">返済日</label>
-                    <input type="date" id="paymentDate">
-                </div>
-                <div class="form-group">
-                    <label for="paymentAmount">返済額（円）</label>
-                    <input type="number" id="paymentAmount" placeholder="20000">
-                </div>
-                <button class="add-btn" onclick="addPayment()">💾 返済記録を追加</button>
+            <h2>返済記録を追加</h2>
+            <div class="form-group">
+                <label for="paymentDate">返済日</label>
+                <input type="date" id="paymentDate">
             </div>
+            <div class="form-group">
+                <label for="paymentAmount">返済額（円）</label>
+                <input type="number" id="paymentAmount" placeholder="20000" inputmode="numeric">
+            </div>
+            <button class="add-btn" onclick="addPayment()">💾 返済記録を追加</button>
         </div>
 
         <div class="table-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 style="color: #555;">返済履歴</h2>
-                <button onclick="clearAllData()" style="background: #ff4444; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.9rem;">🗑️ 全データリセット</button>
+            <div class="section-header">
+                <h2>返済履歴</h2>
+                <button class="clear-btn" onclick="clearAllData()">🗑️ リセット</button>
             </div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>返済日</th>
-                            <th>返済額</th>
-                            <th>累計返済額</th>
-                            <th>返済残額</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="paymentHistory">
-                        <!-- 返済履歴がここに追加されます -->
-                    </tbody>
-                </table>
+            <div id="paymentHistory">
+                <div class="empty-message">まだ返済記録がありません</div>
             </div>
         </div>
 
         <div class="simulation-section">
-            <h2 style="margin-bottom: 20px; color: #555;">📊 返済シミュレーション</h2>
+            <h2 style="margin-bottom: 15px; color: #555; font-size: 1.1rem;">📊 返済シミュレーション</h2>
             <button class="simulation-btn" onclick="toggleSimulation()">💡 シミュレーションを表示</button>
             
             <div id="simulationPanel" class="hidden">
-                <div class="simulation-form">
-                    <div class="form-group">
-                        <label for="monthlyAmount">毎月の予定返済額（円）</label>
-                        <input type="number" id="monthlyAmount" value="20000" placeholder="20000">
-                    </div>
-                    <div class="form-group">
-                        <label for="startDate">返済開始日</label>
-                        <input type="date" id="startDate">
-                    </div>
-                    <button class="add-btn" onclick="generateSimulation()">📈 シミュレーション実行</button>
+                <div class="form-group">
+                    <label for="monthlyAmount">毎月の予定返済額（円）</label>
+                    <input type="number" id="monthlyAmount" value="20000" placeholder="20000" inputmode="numeric">
                 </div>
+                <div class="form-group">
+                    <label for="startDate">返済開始日</label>
+                    <input type="date" id="startDate">
+                </div>
+                <button class="add-btn" onclick="generateSimulation()">📈 シミュレーション実行</button>
                 
                 <div id="simulationResults" class="simulation-results hidden">
-                    <h3 style="color: #555; margin-bottom: 15px;">返済計画 vs 実績比較</h3>
-                    <div class="simulation-table">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>年月</th>
-                                    <th>予定返済額</th>
-                                    <th>実績返済額</th>
-                                    <th>差額</th>
-                                    <th>予定残高</th>
-                                    <th>実績残高</th>
-                                    <th>残高差</th>
-                                    <th>状況</th>
-                                </tr>
-                            </thead>
-                            <tbody id="simulationTableBody">
-                            </tbody>
-                        </table>
-                    </div>
+                    <h3>返済計画 vs 実績比較</h3>
+                    <div id="simulationList"></div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- フローティングアクションボタン -->
+    <button class="fab" onclick="scrollToInput()" title="返済記録を追加">+</button>
 
     <script>
         const TOTAL_DEBT = 373004;
@@ -455,6 +592,13 @@
         // 数値フォーマット関数
         function formatNumber(num) {
             return new Intl.NumberFormat('ja-JP').format(num);
+        }
+
+        // 入力フォームまでスクロール
+        function scrollToInput() {
+            document.querySelector('.input-section').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
         }
 
         // ページ読み込み時にデータを復元
@@ -497,10 +641,15 @@
             document.getElementById('progressPercent').textContent = progressPercent;
         }
 
-        // テーブルを更新
+        // 履歴を更新（スマホ向けカード形式）
         function updateTable() {
-            const tbody = document.getElementById('paymentHistory');
-            tbody.innerHTML = '';
+            const container = document.getElementById('paymentHistory');
+            container.innerHTML = '';
+
+            if (payments.length === 0) {
+                container.innerHTML = '<div class="empty-message">まだ返済記録がありません</div>';
+                return;
+            }
 
             let cumulativeTotal = 0;
 
@@ -508,15 +657,29 @@
                 cumulativeTotal += payment.amount;
                 const remainingAmount = TOTAL_DEBT - cumulativeTotal;
 
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${payment.date}</td>
-                    <td class="amount-cell">¥${formatNumber(payment.amount)}</td>
-                    <td class="total-cell">¥${formatNumber(cumulativeTotal)}</td>
-                    <td class="remaining-cell">¥${formatNumber(remainingAmount)}</td>
-                    <td><button class="delete-btn" onclick="deletePayment(${index})">削除</button></td>
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.innerHTML = `
+                    <div class="history-header">
+                        <div class="history-date">${payment.date}</div>
+                        <button class="delete-btn" onclick="deletePayment(${index})">削除</button>
+                    </div>
+                    <div class="history-amounts">
+                        <div class="amount-item payment-amount">
+                            <div class="label">返済額</div>
+                            <div class="value">¥${formatNumber(payment.amount)}</div>
+                        </div>
+                        <div class="amount-item total-amount">
+                            <div class="label">累計返済額</div>
+                            <div class="value">¥${formatNumber(cumulativeTotal)}</div>
+                        </div>
+                        <div class="amount-item remaining-amount">
+                            <div class="label">返済残額</div>
+                            <div class="value">¥${formatNumber(remainingAmount)}</div>
+                        </div>
+                    </div>
                 `;
-                tbody.appendChild(row);
+                container.appendChild(item);
             });
         }
 
@@ -564,6 +727,16 @@
                     alert('🎉 おめでとうございます！完済達成です！ 🎉');
                 }, 500);
             }
+
+            // 成功メッセージ
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✅ 追加完了！';
+            btn.style.background = 'linear-gradient(135deg, #4CAF50, #45a049)';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = 'linear-gradient(135deg, #4CAF50, #45a049)';
+            }, 1500);
         }
 
         // 返済記録を削除
@@ -595,10 +768,14 @@
         // シミュレーション機能
         function toggleSimulation() {
             const panel = document.getElementById('simulationPanel');
+            const btn = event.target;
+            
             if (panel.classList.contains('hidden')) {
                 panel.classList.remove('hidden');
+                btn.textContent = '📊 シミュレーションを閉じる';
             } else {
                 panel.classList.add('hidden');
+                btn.textContent = '💡 シミュレーションを表示';
                 document.getElementById('simulationResults').classList.add('hidden');
             }
         }
@@ -693,35 +870,47 @@
 
         function displaySimulation(simulation) {
             const resultsDiv = document.getElementById('simulationResults');
-            const tbody = document.getElementById('simulationTableBody');
-            tbody.innerHTML = '';
+            const container = document.getElementById('simulationList');
+            container.innerHTML = '';
 
             simulation.forEach((row, index) => {
-                const tr = document.createElement('tr');
+                const item = document.createElement('div');
+                item.className = 'sim-item';
                 
-                // 行のスタイリング
-                if (!row.isPast) {
-                    tr.classList.add('future-row');
-                } else if (row.actualPayment > 0) {
-                    tr.classList.add('completed-row');
-                }
-
-                tr.innerHTML = `
-                    <td>${row.month}</td>
-                    <td class="planned-amount">¥${formatNumber(row.plannedPayment)}</td>
-                    <td class="actual-amount">¥${formatNumber(row.actualPayment)}</td>
-                    <td class="${row.paymentDiff >= 0 ? 'difference-positive' : 'difference-negative'}">
-                        ${row.paymentDiff >= 0 ? '+' : ''}¥${formatNumber(row.paymentDiff)}
-                    </td>
-                    <td class="planned-amount">¥${formatNumber(row.plannedBalance)}</td>
-                    <td class="actual-amount">¥${formatNumber(row.actualBalance)}</td>
-                    <td class="${row.balanceDiff <= 0 ? 'difference-positive' : 'difference-negative'}">
-                        ${row.balanceDiff <= 0 ? '+' : ''}¥${formatNumber(-row.balanceDiff)}
-                    </td>
-                    <td>${row.status}</td>
+                item.innerHTML = `
+                    <div class="sim-header">
+                        <div class="sim-month">${row.month}</div>
+                        <div class="sim-status">${row.status}</div>
+                    </div>
+                    <div class="sim-amounts">
+                        <div class="sim-amount planned">
+                            <div class="label">予定返済額</div>
+                            <div class="value">¥${formatNumber(row.plannedPayment)}</div>
+                        </div>
+                        <div class="sim-amount actual">
+                            <div class="label">実績返済額</div>
+                            <div class="value">¥${formatNumber(row.actualPayment)}</div>
+                        </div>
+                    </div>
+                    <div class="sim-balances">
+                        <div class="sim-balance">
+                            <div class="label">予定残高</div>
+                            <div class="value">¥${formatNumber(row.plannedBalance)}</div>
+                        </div>
+                        <div class="sim-balance">
+                            <div class="label">実績残高</div>
+                            <div class="value">¥${formatNumber(row.actualBalance)}</div>
+                        </div>
+                        <div class="sim-balance">
+                            <div class="label">差額</div>
+                            <div class="value ${row.balanceDiff <= 0 ? 'difference-positive' : 'difference-negative'}">
+                                ${row.balanceDiff <= 0 ? '+' : ''}¥${formatNumber(-row.balanceDiff)}
+                            </div>
+                        </div>
+                    </div>
                 `;
                 
-                tbody.appendChild(tr);
+                container.appendChild(item);
             });
 
             // サマリー行を追加
@@ -730,21 +919,41 @@
             const completionMonth = simulation.find(row => row.plannedBalance <= 0)?.month || '未定';
             const actualCompletionMonth = simulation.find(row => row.actualBalance <= 0 && row.actualPayment > 0)?.month || '未完済';
 
-            const summaryTr = document.createElement('tr');
-            summaryTr.classList.add('summary-row');
-            summaryTr.innerHTML = `
-                <td><strong>合計/完済予定</strong></td>
-                <td class="planned-amount"><strong>¥${formatNumber(totalPlanned)}</strong></td>
-                <td class="actual-amount"><strong>¥${formatNumber(totalActual)}</strong></td>
-                <td class="${totalActual - totalPlanned >= 0 ? 'difference-positive' : 'difference-negative'}">
-                    <strong>${totalActual - totalPlanned >= 0 ? '+' : ''}¥${formatNumber(totalActual - totalPlanned)}</strong>
-                </td>
-                <td><strong>${completionMonth}</strong></td>
-                <td><strong>${actualCompletionMonth}</strong></td>
-                <td>-</td>
-                <td><strong>${actualCompletionMonth !== '未完済' ? '🎉 完済!' : '📈 継続中'}</strong></td>
+            const summaryItem = document.createElement('div');
+            summaryItem.className = 'sim-item';
+            summaryItem.innerHTML = `
+                <div class="sim-header">
+                    <div class="sim-month">完済予定</div>
+                    <div class="sim-status">${actualCompletionMonth !== '未完済' ? '🎉 完済!' : '📈 継続中'}</div>
+                </div>
+                <div class="sim-amounts">
+                    <div class="sim-amount planned">
+                        <div class="label">予定完済月</div>
+                        <div class="value">${completionMonth}</div>
+                    </div>
+                    <div class="sim-amount actual">
+                        <div class="label">実績完済月</div>
+                        <div class="value">${actualCompletionMonth}</div>
+                    </div>
+                </div>
+                <div class="sim-balances">
+                    <div class="sim-balance">
+                        <div class="label">予定合計</div>
+                        <div class="value">¥${formatNumber(totalPlanned)}</div>
+                    </div>
+                    <div class="sim-balance">
+                        <div class="label">実績合計</div>
+                        <div class="value">¥${formatNumber(totalActual)}</div>
+                    </div>
+                    <div class="sim-balance">
+                        <div class="label">差額</div>
+                        <div class="value ${totalActual - totalPlanned >= 0 ? 'difference-positive' : 'difference-negative'}">
+                            ${totalActual - totalPlanned >= 0 ? '+' : ''}¥${formatNumber(totalActual - totalPlanned)}
+                        </div>
+                    </div>
+                </div>
             `;
-            tbody.appendChild(summaryTr);
+            container.appendChild(summaryItem);
 
             resultsDiv.classList.remove('hidden');
         }
@@ -762,6 +971,10 @@
             const firstPaymentDate = payments.length > 0 ? payments[0].date : new Date().toISOString().split('T')[0];
             document.getElementById('startDate').value = firstPaymentDate;
         });
+
+        // タッチ操作のフィードバック改善
+        document.addEventListener('touchstart', function() {}, { passive: true });
     </script>
 </body>
 </html>
+                
