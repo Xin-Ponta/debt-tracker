@@ -1,130 +1,233 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>たらこの返済管理システム</title>
 <style>
-    body {
-        font-family: 'Comic Sans MS', cursive, sans-serif;
-        background-color: #ffeef2;
-        color: #333;
-        text-align: center;
-        padding: 20px;
-    }
-    h1 {
-        color: #ff6699;
-        text-shadow: 1px 1px #fff;
-    }
-    .container {
-        background: #fff0f5;
-        padding: 20px;
-        border-radius: 20px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        max-width: 500px;
-        margin: auto;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-    th, td {
-        padding: 10px;
-        border-bottom: 1px solid #ffcce0;
-    }
-    th {
-        background-color: #ffb6c1;
-    }
-    input, button {
-        padding: 8px;
-        border-radius: 10px;
-        border: none;
-        font-size: 14px;
-    }
-    button {
-        background-color: #ff99cc;
-        cursor: pointer;
-    }
-    button:hover {
-        background-color: #ff77aa;
-    }
-    .summary {
-        margin-top: 20px;
-        background: #fffafc;
-        padding: 15px;
-        border-radius: 15px;
-        font-weight: bold;
-    }
+  body {
+    font-family: "Rounded Mplus 1c", sans-serif, sans-serif;
+    background: linear-gradient(135deg, #d0e8ff, #f0faff);
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+  header {
+    background-color: #4a90e2;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    position: relative;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+  }
+  .illustration {
+    position: absolute;
+    right: 1rem;
+    top: 0.5rem;
+    width: 50px;
+  }
+  main {
+    max-width: 600px;
+    margin: auto;
+    padding: 1rem;
+  }
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+  }
+  label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: bold;
+  }
+  input[type="date"], input[type="number"] {
+    width: 100%;
+    padding: 0.4rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 0.6rem;
+    font-size: 1rem;
+  }
+  button {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-right: 0.5rem;
+  }
+  button:hover {
+    background-color: #357ABD;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+  }
+  th, td {
+    border-bottom: 1px solid #ddd;
+    padding: 0.5rem;
+    text-align: center;
+  }
+  th {
+    background-color: #e1f0ff;
+  }
+  #simulationModal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.4);
+  }
+  #simulationContent {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    max-width: 550px;
+    margin: 10% auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    max-height: 80vh;
+    overflow-y: auto;
+  }
 </style>
 </head>
 <body>
-    <h1>たらこの返済管理システム</h1>
-    <div class="container">
-        <form id="paymentForm">
-            <label>返済日: <input type="date" id="date" required></label><br><br>
-            <label>返済額: <input type="number" id="amount" value="20000" required></label><br><br>
-            <button type="submit">記録する</button>
-        </form>
+<header>
+  <h1>たらこの返済管理システム</h1>
+  <svg class="illustration" xmlns="http://www.w3.org/2000/svg" fill="#fff" viewBox="0 0 24 24"><path d="M12 1a9 9 0 0 0-9 9c0 4.837 4.163 9 9 9s9-4.163 9-9a9 9 0 0 0-9-9Zm0 16a7 7 0 0 1 0-14 7 7 0 0 1 0 14Zm1-7h2a1 1 0 0 0 0-2h-2V6a1 1 0 0 0-2 0v2H9a1 1 0 0 0 0 2h2v2a1 1 0 0 0 2 0V10Z"/></svg>
+</header>
 
-        <div class="summary" id="summary"></div>
+<main>
+  <div class="card">
+    <label for="date">返済日</label>
+    <input type="date" id="date" />
+    <label for="amount">返済額</label>
+    <input type="number" id="amount" value="20000" />
+    <button onclick="addPayment()">記録</button>
+    <button onclick="openSimulation()">完済シミュレーション</button>
+  </div>
 
-        <table id="paymentTable">
-            <thead>
-                <tr>
-                    <th>返済日</th>
-                    <th>返済額</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
+  <div class="card">
+    <h3>返済状況</h3>
+    <p>返済総額: <span id="totalAmount"></span> 円</p>
+    <p>返済済み: <span id="paidAmount"></span> 円</p>
+    <p>残り: <span id="remainingAmount"></span> 円</p>
+    <p>完済予定月: <span id="completionMonth"></span></p>
+  </div>
+
+  <div class="card">
+    <h3>返済履歴</h3>
+    <table id="historyTable">
+      <thead>
+        <tr><th>日付</th><th>返済額</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</main>
+
+<div id="simulationModal">
+  <div id="simulationContent">
+    <h3>完済シミュレーション</h3>
+    <table id="simulationTable">
+      <thead>
+        <tr><th>月</th><th>返済予定額</th><th>返済実績額</th><th>残金</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button onclick="closeSimulation()">閉じる</button>
+  </div>
+</div>
 
 <script>
-const totalDebt = 373004;
-let payments = JSON.parse(localStorage.getItem('payments')) || [];
+  const totalDebt = 373004;
+  let payments = JSON.parse(localStorage.getItem('payments') || '[]');
 
-function updateSummary() {
-    let paid = payments.reduce((sum, p) => sum + p.amount, 0);
-    let remaining = totalDebt - paid;
-    let monthsLeft = Math.ceil(remaining / 20000);
+  function formatCurrency(num) {
+    return num.toLocaleString();
+  }
 
-    let today = new Date();
-    today.setMonth(today.getMonth() + monthsLeft);
-    let finishMonth = today.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long' });
-
-    document.getElementById('summary').innerHTML = `
-        返済済み額: ￥${paid.toLocaleString()}<br>
-        残金: ￥${remaining.toLocaleString()}<br>
-        完済予定月: ${finishMonth}
-    `;
-}
-
-function renderTable() {
-    let tbody = document.querySelector('#paymentTable tbody');
+  function updateDisplay() {
+    const paid = payments.reduce((sum, p) => sum + p.amount, 0);
+    const remaining = totalDebt - paid;
+    document.getElementById('totalAmount').textContent = formatCurrency(totalDebt);
+    document.getElementById('paidAmount').textContent = formatCurrency(paid);
+    document.getElementById('remainingAmount').textContent = formatCurrency(Math.max(remaining, 0));
+    const months = Math.ceil(remaining / 20000);
+    const completionDate = new Date();
+    completionDate.setMonth(completionDate.getMonth() + months);
+    document.getElementById('completionMonth').textContent = completionDate.getFullYear() + '年' + (completionDate.getMonth() + 1) + '月';
+    const tbody = document.querySelector('#historyTable tbody');
     tbody.innerHTML = '';
     payments.forEach(p => {
-        let tr = document.createElement('tr');
-        tr.innerHTML = `<td>${p.date}</td><td>￥${p.amount.toLocaleString()}</td>`;
-        tbody.appendChild(tr);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${p.date}</td><td>${formatCurrency(p.amount)}</td>`;
+      tbody.appendChild(tr);
     });
-}
+  }
 
-document.getElementById('paymentForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    let date = document.getElementById('date').value;
-    let amount = parseInt(document.getElementById('amount').value);
+  // 月ごとの実績集計
+  function getMonthlyPayments() {
+    const monthly = {};
+    payments.forEach(p => {
+      const m = p.date.slice(0,7); // yyyy-mm
+      monthly[m] = (monthly[m] || 0) + p.amount;
+    });
+    return monthly;
+  }
 
+  function addPayment() {
+    const date = document.getElementById('date').value;
+    const amount = parseInt(document.getElementById('amount').value);
+    if (!date || isNaN(amount) || amount <= 0) return alert('正しい返済日と金額を入力してください');
     payments.push({ date, amount });
     localStorage.setItem('payments', JSON.stringify(payments));
+    updateDisplay();
+  }
 
-    renderTable();
-    updateSummary();
-    this.reset();
-    document.getElementById('amount').value = 20000;
-});
+  function openSimulation() {
+    const tbody = document.querySelector('#simulationTable tbody');
+    tbody.innerHTML = '';
+    const monthlyPayments = getMonthlyPayments();
 
-renderTable();
-updateSummary();
+    let remaining = totalDebt - payments.reduce((sum, p) => sum + p.amount, 0);
+    const months = Math.ceil(remaining / 20000);
+    let monthDate = new Date();
+    let totalPaidSoFar = payments.reduce((sum, p) => sum + p.amount, 0);
+
+    for (let i = 1; i <= months; i++) {
+      const monthKey = monthDate.toISOString().slice(0,7); // yyyy-mm
+      const scheduledPay = Math.min(20000, remaining);
+      const actualPay = monthlyPayments[monthKey] || 0;
+      remaining -= scheduledPay;
+      if (remaining < 0) remaining = 0;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${monthDate.getFullYear()}年${monthDate.getMonth() + 1}月</td>
+                      <td>${formatCurrency(scheduledPay)}</td>
+                      <td>${formatCurrency(actualPay)}</td>
+                      <td>${formatCurrency(remaining)}</td>`;
+      tbody.appendChild(tr);
+
+      monthDate.setMonth(monthDate.getMonth() + 1);
+    }
+    document.getElementById('simulationModal').style.display = 'block';
+  }
+
+  function closeSimulation() {
+    document.getElementById('simulationModal').style.display = 'none';
+  }
+
+  updateDisplay();
 </script>
 </body>
 </html>
