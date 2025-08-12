@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>たらこの返済管理システム</title>
+<style>
+    body {
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        background-color: #ffeef2;
+        color: #333;
+        text-align: center;
+        padding: 20px;
+    }
+    h1 {
+        color: #ff6699;
+        text-shadow: 1px 1px #fff;
+    }
+    .container {
+        background: #fff0f5;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        max-width: 500px;
+        margin: auto;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid #ffcce0;
+    }
+    th {
+        background-color: #ffb6c1;
+    }
+    input, button {
+        padding: 8px;
+        border-radius: 10px;
+        border: none;
+        font-size: 14px;
+    }
+    button {
+        background-color: #ff99cc;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #ff77aa;
+    }
+    .summary {
+        margin-top: 20px;
+        background: #fffafc;
+        padding: 15px;
+        border-radius: 15px;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+    <h1>たらこの返済管理システム</h1>
+    <div class="container">
+        <form id="paymentForm">
+            <label>返済日: <input type="date" id="date" required></label><br><br>
+            <label>返済額: <input type="number" id="amount" value="20000" required></label><br><br>
+            <button type="submit">記録する</button>
+        </form>
+
+        <div class="summary" id="summary"></div>
+
+        <table id="paymentTable">
+            <thead>
+                <tr>
+                    <th>返済日</th>
+                    <th>返済額</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+<script>
+const totalDebt = 373004;
+let payments = JSON.parse(localStorage.getItem('payments')) || [];
+
+function updateSummary() {
+    let paid = payments.reduce((sum, p) => sum + p.amount, 0);
+    let remaining = totalDebt - paid;
+    let monthsLeft = Math.ceil(remaining / 20000);
+
+    let today = new Date();
+    today.setMonth(today.getMonth() + monthsLeft);
+    let finishMonth = today.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long' });
+
+    document.getElementById('summary').innerHTML = `
+        返済済み額: ￥${paid.toLocaleString()}<br>
+        残金: ￥${remaining.toLocaleString()}<br>
+        完済予定月: ${finishMonth}
+    `;
+}
+
+function renderTable() {
+    let tbody = document.querySelector('#paymentTable tbody');
+    tbody.innerHTML = '';
+    payments.forEach(p => {
+        let tr = document.createElement('tr');
+        tr.innerHTML = `<td>${p.date}</td><td>￥${p.amount.toLocaleString()}</td>`;
+        tbody.appendChild(tr);
+    });
+}
+
+document.getElementById('paymentForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let date = document.getElementById('date').value;
+    let amount = parseInt(document.getElementById('amount').value);
+
+    payments.push({ date, amount });
+    localStorage.setItem('payments', JSON.stringify(payments));
+
+    renderTable();
+    updateSummary();
+    this.reset();
+    document.getElementById('amount').value = 20000;
+});
+
+renderTable();
+updateSummary();
+</script>
+</body>
+</html>
